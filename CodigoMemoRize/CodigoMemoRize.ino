@@ -5,13 +5,15 @@
 #define REQUEST_RATE 5000 // taxa de req 5000ms ou 5s
 
 // endereço mac do ethernet
-static byte mymac[] = { 0x76,0x68,0x69,0x4D,0x40,0x21 };
+static byte mymac[] = { 0x45,0x68,0x69,0x4D,0x40,0x21 };
 // endereco ip do ethernet
-static byte myip[] = { 192,168,0,120 };
+static byte myip[] = { 192,168,0,130 };
 // ip netmask do ethernet
 static byte mask[] = { 255,255,255,0 };
 // porta de entrada do endereco ip
 static byte gwip[] = { 192,168,0,1 };
+// porta de entrada do dns
+static byte dns[] = { 8,8,8,8 };
 // nome do website remoto
 const char website[] PROGMEM = "memorize.southcentralus.cloudapp.azure.com";
      
@@ -20,9 +22,9 @@ int estadobotao = 0;
 // o número do pino do botão
 const int botao = 4;   
 // o número do pino do led 1
-const int led1 = 10;
+const int led1 = 5;
 // o número do pino do led 2
-const int led2 = 7;         
+const int led2 = 6;         
 
 // variáveis usadas no loop
 int loopReq = 1;
@@ -68,7 +70,7 @@ void setup () {
   if (ether.begin(sizeof Ethernet::buffer, mymac, 8) == 0)
     Serial.println( "Falha ao acessar Ethernet controller");
 
-  ether.staticSetup(myip, gwip, NULL, mask);
+  ether.staticSetup(myip, gwip, dns, mask);
 
  // condicional para identificar se o módulo ethernet acessa ao servidor
   if (!ether.dnsLookup(website))
@@ -86,7 +88,7 @@ void loop () {
       // condicional para saber se já foi enviada a requisição
       if(loopReq <= 1){
         Serial.println("\n>>> REQ");
-        ether.browseUrl(PSTR("/api/sessao/arduino/"), "1", website, my_result_cb);
+        ether.browseUrl(PSTR("/api/sessao/arduino/"), "2", website, my_result_cb);
         digitalWrite(led1, HIGH);
         loopReq = loopReq + 1;
         delay(1500);
